@@ -1,17 +1,13 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Search
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+This application demonstrates how to build a moderately complex search feature in the Composable Architecture:
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+* Typing into the search field executes an API request to search for locations.
+* Tapping a location runs another API request to fetch the weather for that location, and when a response is received the data is displayed inline in that row.
 
-* `/shared` is for the code that will be shared between all targets in the project.
-  The most important subfolder is `commonMain`. If preferred, you can add code to the platform-specific folders here too.
+In addition to those basic features, the following extra things are implemented:
 
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+* Search API requests are debounced so that one is run only after the user stops typing for 300ms.
+* If you tap a location while a weather API request is already in-flight it will cancel that request and start a new one.
+* Dependencies and side effects are fully controlled. The reducer that runs this application needs a [weather API client](Search/WeatherClient.swift) to run effects.
+* A full [test suite](SearchTests/SearchTests.swift) is implemented. Not only is core functionality tested, but also failure flows and subtle edge cases (e.g. clearing the search query cancels any in-flight search requests).
