@@ -1,0 +1,27 @@
+name: Weather
+options:
+  bundleIdPrefix: com.zsrajki
+packages:
+  ComposableArchitecture:
+    url: https://github.com/pointfreeco/swift-composable-architecture
+    from: 1.17.0
+targets:
+  Weather:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.2"
+    sources: [Weather, WeatherTests]
+    settings:
+      configs:
+        debug:
+          CUSTOM_BUILD_SETTING: my_debug_value
+        release:
+          CUSTOM_BUILD_SETTING: my_release_value
+    info:
+      path: Weather/Info.plist
+      properties:
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSLocationWhenInUseUsageDescription: "We need your location to show you the weather"
+    dependencies:
+      - framework: Shared.xcframework
+      - package: ComposableArchitecture
