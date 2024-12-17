@@ -15,8 +15,8 @@ struct Search {
     @ObservableState
     struct State: Equatable {
         var searchQuery = ""
-        var results = [GeocodingResult]()
-        var selectedResult: GeocodingResult?
+        var places = [GeocodingPlace]()
+        var selectedPlace: GeocodingPlace?
         @Presents public var days: Days.State?
     }
 
@@ -24,8 +24,8 @@ struct Search {
         case searchQueryChanged(String)
         case searchQueryChangeDebounced
         case days(PresentationAction<Days.Action>)
-        case searchResponse(Result<[GeocodingResult], Never>)
-        case selectResult(GeocodingResult)
+        case searchResponse(Result<[GeocodingPlace], Never>)
+        case selectPlace(GeocodingPlace)
         case doneTapped
     }
 
@@ -36,7 +36,7 @@ struct Search {
                 return .none
             case let .searchQueryChanged(query):
                 guard !query.isEmpty else {
-                    state.results = []
+                    state.places = []
                     return .none
                 }
                 state.searchQuery = query
@@ -49,21 +49,24 @@ struct Search {
                 }
 
                 return .run { [query = state.searchQuery] send in
-                    let result = try? await geocodingClient.geocode(address: query)
-                    guard let result else { return }
+                    guard let result = try? await geocodingClient.geocode(address: query) else {
+                        return
+                    }
+
                     await send(.searchResponse(.success(result)))
                 }
             case let .searchResponse(.success(response)):
-                state.results = response
+                state.places = response
+
                 return .none
             case .doneTapped:
-                if let result = state.selectedResult {
-                    state.days = Days.State(result: result)
+                if let place = state.selectedPlace {
+                    state.days = Days.State(place: place)
                 }
                 
                 return .none
-            case let .selectResult(result):
-                state.selectedResult = result
+            case let .selectPlace(place):
+                state.selectedPlace = place
                 return .none
             }
         }

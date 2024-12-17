@@ -12,7 +12,7 @@ import Shared
 
 @DependencyClient
 struct GeocodingClient {
-    var geocode: (_ address: String) async throws -> [GeocodingResult]
+    var geocode: (_ address: String) async throws -> [GeocodingPlace]
 }
 
 extension GeocodingClient: DependencyKey {
@@ -27,7 +27,7 @@ extension GeocodingClient: DependencyKey {
 
             return placemarks.compactMap { landmark in
                 guard let longitude = landmark.location?.coordinate.longitude,
-                let latitude = landmark.location?.coordinate.latitude else {
+                      let latitude = landmark.location?.coordinate.latitude else {
                     return nil
                 }
 
@@ -36,7 +36,7 @@ extension GeocodingClient: DependencyKey {
                                         name: landmark.locality ?? landmark.administrativeArea,
                                         type: nil)
 
-                return GeocodingResult(city: landmark.locality,
+                return GeocodingPlace(city: landmark.locality,
                                        postalCode: landmark.postalCode,
                                        state: landmark.administrativeArea,
                                        country: landmark.country,
@@ -50,7 +50,7 @@ extension GeocodingClient: TestDependencyKey {
     static let testValue = GeocodingClient(
         geocode: { address in
             [
-                GeocodingResult(
+                GeocodingPlace(
                     city: "Test City",
                     postalCode: "30000",
                     state: "Test state",

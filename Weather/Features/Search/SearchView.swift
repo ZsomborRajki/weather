@@ -7,13 +7,12 @@
 
 import ComposableArchitecture
 import SwiftUI
-import Shared
 
 struct SearchView: View {
     @Bindable var store: StoreOf<Search>
 
     var body: some View {
-        VStack(alignment: .leading,spacing: 24) {
+        VStack(alignment: .leading, spacing: 24) {
             Text("Search your location:")
                 .font(.headline)
                 .padding(.bottom, 8)
@@ -34,9 +33,9 @@ struct SearchView: View {
                 store.send(.doneTapped)
             }
             .buttonStyle(.primary)
-            .disabled(store.selectedResult == nil)
+            .disabled(store.selectedPlace == nil)
 
-            ForEach(store.results) { makeCityCard(result: $0) }
+            ForEach(store.places) { makeCityCard(place: $0) }
 
             Spacer()
         }
@@ -53,26 +52,26 @@ struct SearchView: View {
         }
     }
 
-    private func makeCityCard(result: GeocodingResult) -> some View {
+    private func makeCityCard(place: GeocodingPlace) -> some View {
         Button {
-            store.send(.selectResult(result))
+            store.send(.selectPlace(place))
         } label: {
             VStack(alignment: .leading, spacing: 16) {
-                if let city = result.city {
+                if let city = place.city {
                     Text(city)
                         .font(.caption)
                 }
 
                 HStack {
-                    if let postalCode = result.postalCode {
+                    if let postalCode = place.postalCode {
                         Text("\(postalCode) -")
                     }
 
-                    if let state = result.state {
+                    if let state = place.state {
                         Text("\(state) -")
                     }
 
-                    if let country = result.country {
+                    if let country = place.country {
                         Text(country)
                     }
 
@@ -82,7 +81,7 @@ struct SearchView: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(store.selectedResult == result ? Color(.purple) : Color(.pressedDark))
+                    .fill(store.selectedPlace == place ? Color(.purple) : Color(.pressedDark))
                     .stroke(Color.white)
             )
         }
