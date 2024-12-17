@@ -16,15 +16,18 @@ struct Welcome {
 
     enum Action {
         case search(PresentationAction<Search.Action>)
+        case enterLocationTapped
         case useMyLocationTapped
     }
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .search:
+            case .enterLocationTapped:
                 state.search = Search.State()
-                   return .none
+                return .none
+            case .search:
+                return .none
             case .useMyLocationTapped:
                 return .none
             }

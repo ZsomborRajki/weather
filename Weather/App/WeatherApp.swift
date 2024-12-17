@@ -17,6 +17,7 @@ struct WeatherApp: App {
                     Welcome()
                 }
             )
+            .preferredColorScheme(.dark)
         }
     }
 }
