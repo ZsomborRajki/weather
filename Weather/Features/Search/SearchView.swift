@@ -50,6 +50,7 @@ struct SearchView: View {
         .navigationDestination(item: $store.scope(state: \.days, action: \.days)) { store in
             DaysView(store: store)
         }
+        .background(Color(.background))
     }
 
     private func makeCityCard(place: GeocodingPlace) -> some View {

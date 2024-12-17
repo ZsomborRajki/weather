@@ -39,7 +39,5 @@ extension WeatherApiClient: DependencyKey {
 
 enum WeatherApiError: LocalizedError {
     case missingRequestData
-    case emptyReposnse
     case error
-    case failure(String)
 }

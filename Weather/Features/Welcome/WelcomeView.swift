@@ -38,6 +38,7 @@ struct WelcomeView: View {
             .padding()
             .background(Color(.background))
         }
+        .accentColor(.white)
     }
 }
 

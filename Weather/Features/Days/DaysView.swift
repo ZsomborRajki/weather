@@ -11,29 +11,24 @@ import Foundation
 import Shared
 
 struct DaysView: View {
-    let store: StoreOf<Days>
+    @Bindable var store: StoreOf<Days>
 
     var body: some View {
         ScrollView {
             if store.isLoading {
-                ProgressView()
-                    .foregroundColor(.white)
+                HStack {
+                    Spacer()
+
+                    ProgressView()
+                        .foregroundColor(.white)
+
+                    Spacer()
+                }
             } else if !store.errorText.isEmpty {
                 errorState
             } else {
                 VStack(spacing: 8) {
-                    HStack {
-                        Text("Location")
-
-                        Spacer()
-
-                        Button {
-
-                        } label: {
-                            Text(store.place.city ?? store.place.state ?? "City")
-                        }
-                    }
-                    .padding(.bottom, 16)
+                    header
 
                     if let forecast = store.forecast {
                         ForEach(forecast.timelines.daily, id: \.self) {
@@ -43,7 +38,6 @@ struct DaysView: View {
 
                     Spacer()
                 }
-
             }
         }
         .onAppear {
@@ -53,28 +47,59 @@ struct DaysView: View {
             await store.send(.fetchForecast).finish()
         }
         .padding()
+        .background(Color(.background))
+        .navigationDestination(item: $store.scope(state: \.dayDetails,
+                                                  action: \.dayDetails)) { store in
+            DayDetailsView(store: store)
+        }
         .navigationTitle("Weather forecast")
     }
 
-    private func itemView(item: TimelineItem<DataValuesDaily>) -> some View {
+    private var header: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 8) {
-                let date = item.time.asSwiftDate
-
-                Text(date, format: .dateTime.weekday(.wide))
-                    .bold()
-
-                Text(date, format: .dateTime.day().month(.defaultDigits).year())
-            }
+            Text("Location")
 
             Spacer()
+
+            Button {
+
+            } label: {
+                Text(store.place.city ?? store.place.state ?? "City")
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white)
+                    )
+            }
+            .buttonStyle(.plain)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.disabledDark))
-                .stroke(Color.white)
-        )
+        .padding(.bottom, 16)
+    }
+
+    private func itemView(item: TimelineItem<DataValuesDaily>) -> some View {
+        Button {
+            store.send(.selectDayItem(item))
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    let date = item.time.asSwiftDate
+
+                    Text(date, format: .dateTime.weekday(.wide))
+                        .bold()
+
+                    Text(date, format: .dateTime.day().month(.defaultDigits).year())
+                }
+
+                Spacer()
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(.disabledDark))
+                    .stroke(Color.white)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var errorState: some View {

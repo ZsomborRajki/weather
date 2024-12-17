@@ -20,7 +20,7 @@ extension WeatherForecastTimelines {
 }
 
 extension [TimelineItem<DataValuesDaily>] {
-    static let mock = [TimelineItem<DataValuesDaily>(time: .mock, values: .mock)]
+    static let mock = [TimelineItem<DataValuesDaily>(time: .mockNow, values: .mock)]
 }
 
 extension DataValuesDaily {
@@ -71,8 +71,8 @@ extension DataValuesDaily {
         iceAccumulationSum: 0.0,
 
         // Moon times
-        moonriseTime:.mock,
-        moonsetTime:.mock,
+        moonriseTime:.mockNow,
+        moonsetTime:.mockNow,
 
         // Precipitation probability (0-1)
         precipitationProbabilityAvg: 0.3,
@@ -132,8 +132,8 @@ extension DataValuesDaily {
         snowIntensityMin: 0.0,
 
         // Sun times
-        sunriseTime: .mock,
-        sunsetTime:.mock,
+        sunriseTime: .mockSunrise,
+        sunsetTime: .mockSunset,
 
         // Temperature apparent (°C)
         temperatureApparentAvg: 22.0,
@@ -178,5 +178,7 @@ extension DataValuesDaily {
 }
 
 extension Kotlinx_datetimeInstant {
-    static let mock = Kotlinx_datetimeInstant.companion.fromEpochMilliseconds(epochMilliseconds: 1703700000)
+    static let mockNow = Kotlinx_datetimeInstant.companion.fromEpochMilliseconds(epochMilliseconds: 1734448355000)
+    static let mockSunrise = Kotlinx_datetimeInstant.companion.fromEpochMilliseconds(epochMilliseconds: 1734405155000)
+    static let mockSunset = Kotlinx_datetimeInstant.companion.fromEpochMilliseconds(epochMilliseconds: 1734189155000)
 }
