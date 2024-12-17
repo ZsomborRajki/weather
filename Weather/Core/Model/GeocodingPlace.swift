@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct GeocodingPlace: Equatable, Identifiable {
-    let id = UUID()
+struct GeocodingPlace: Equatable, Identifiable, Codable {
+    var id = UUID()
     let city: String?
     let postalCode: String?
     let state: String?

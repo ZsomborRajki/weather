@@ -7,7 +7,6 @@
 
 import CoreLocation
 import SwiftUI
-import Combine
 import ComposableArchitecture
 
 // MARK: - LocationManaging
@@ -22,9 +21,10 @@ protocol LocationManaging: ObservableObject {
     func stopUpdatingLocation()
 }
 
-@Observable
+// MARK: - LocationManager
+
 class LocationManager: NSObject, LocationManaging {
-    @ObservationIgnored let locationManager = CLLocationManager()
+    let locationManager = CLLocationManager()
 
     var location: CLLocation?
     var authorizationStatus: CLAuthorizationStatus
@@ -53,24 +53,23 @@ class LocationManager: NSObject, LocationManaging {
 }
 
 // MARK: - CLLocationManagerDelegate
+
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print(locations)
         location = locations.last
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
         self.error = error
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        print(manager)
         authorizationStatus = manager.authorizationStatus
     }
 }
 
 // MARK: - TCA Dependencies
+
 extension DependencyValues {
     var locationManager: any LocationManaging {
         get { self[LocationManagerKey.self] }

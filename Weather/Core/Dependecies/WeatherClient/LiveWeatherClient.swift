@@ -38,7 +38,7 @@ enum WeatherApiError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .error: "Error fetiching data"
+        case .error: "Error fetching data"
         }
     }
 }

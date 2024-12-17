@@ -12,7 +12,7 @@ import Shared
 struct Days {
     @ObservableState
     struct State: Equatable {
-        let place: GeocodingPlace
+        var place: GeocodingPlace
         var isLoading = false
         var forecast: WeatherForecast?
         var errorText = ""
@@ -27,6 +27,8 @@ struct Days {
         case dayDetails(PresentationAction<DayDetails.Action>)
         case location(PresentationAction<LocationFeature.Action>)
         case openLocation
+        case dismissLocation
+        case selectPlace(GeocodingPlace)
     }
 
     @Dependency(\.weatherClient) var weatherClient
@@ -61,8 +63,20 @@ struct Days {
                 return .none
             case .openLocation:
                 state.location = LocationFeature.State()
-                
+
                 return .none
+            case .dismissLocation:
+                state.location = nil
+
+                return .none
+            case .selectPlace(let place):
+                state.place = place
+                state.forecast = nil
+                state.location = nil
+
+                return .send(.fetchForecast)
+            case let .location(.presented(.selectPlace(place))):
+                return .send(.selectPlace(place))
             case .dayDetails, .location:
                 return .none
             }

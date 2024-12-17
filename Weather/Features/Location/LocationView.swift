@@ -12,6 +12,8 @@ import CoreLocation
 struct LocationView: View {
     let store: StoreOf<LocationFeature>
 
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("""
@@ -29,20 +31,7 @@ struct LocationView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Current location indicator")
 
-            if let place = store.locationPlace {
-                PlaceCard(place: place, selectedPlace: store.selectedPlace) {
-                    print("asd")
-                }
-                .overlay {
-                    HStack {
-                        Spacer()
-
-                        Image(systemName: "location.fill")
-                    }
-                    .padding()
-                    .accessibilityHidden(true)
-                }
-            }
+            placeCard
 
             if store.locationPermission == .denied ||
                 store.locationPermission == .restricted {
@@ -79,9 +68,30 @@ struct LocationView: View {
             store.send(.requestLocationPermission)
             store.send(.requestLocation)
         }
+        .onChange(of: scenePhase) { _, phase in
+            store.send(.scenePhaseChanged(phase))
+        }
         .padding()
         .background(Color(.background))
         .navigationTitle("Location")
+    }
+
+    @ViewBuilder
+    private var placeCard: some View {
+        if let place = store.locationPlace {
+            PlaceCard(place: place, selectedPlace: store.selectedPlace) {
+                store.send(.selectPlace(place))
+            }
+            .overlay {
+                HStack {
+                    Spacer()
+
+                    Image(systemName: "location.fill")
+                }
+                .padding()
+                .accessibilityHidden(true)
+            }
+        }
     }
 }
 

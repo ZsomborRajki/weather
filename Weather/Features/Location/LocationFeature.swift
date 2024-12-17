@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import CoreLocation
+import SwiftUI
 
 @Reducer
 struct LocationFeature {
@@ -16,6 +17,7 @@ struct LocationFeature {
         var selectedPlace: GeocodingPlace?
         var locationPermission: CLAuthorizationStatus?
         var errorText = ""
+        var scenePhase: ScenePhase = .inactive
     }
 
     enum Action {
@@ -25,15 +27,27 @@ struct LocationFeature {
         case locationResponse(GeocodingPlace)
         case setErrorText(String)
         case openSettings
+        case scenePhaseChanged(ScenePhase)
+        case selectPlace(GeocodingPlace)
     }
 
     @Dependency(\.locationManager) var locationManager
     @Dependency(\.openSettings) var openSettings
     @Dependency(\.geocodingClient) var geocodingClient
+    @Dependency(\.dismiss) var dismiss
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
+            case let .scenePhaseChanged(phase):
+                state.scenePhase = phase
+                if phase == .active {
+                    return .concatenate([
+                        .send(.requestLocationPermission),
+                        .send(.requestLocation)
+                    ])
+                }
+                return .none
             case .requestLocationPermission:
                 return .run { send in
                     locationManager.requestPermission()
@@ -77,6 +91,10 @@ struct LocationFeature {
                 state.errorText = text
                 
                 return .none
+            case .selectPlace:
+                return .run { send in
+                    await self.dismiss()
+                }
             case .openSettings:
                 return .run { _ in
                     await self.openSettings()

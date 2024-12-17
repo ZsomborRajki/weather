@@ -16,16 +16,7 @@ struct DaysView: View {
     var body: some View {
         ScrollView {
             if store.isLoading {
-                HStack {
-                    Spacer()
-
-                    ProgressView()
-                        .foregroundColor(.white)
-                        .accessibilityLabel("Loading")
-                        .accessibilityHint("Please wait while content is loading")
-
-                    Spacer()
-                }
+                loader
             } else if !store.errorText.isEmpty {
                 errorState
             } else {
@@ -49,16 +40,29 @@ struct DaysView: View {
             await store.send(.fetchForecast).finish()
         }
         .padding()
-        .background(Color(.background))
         .navigationDestination(item: $store.scope(state: \.location,
                                                   action: \.location)) { store in
             LocationView(store: store)
         }
+        .background(Color(.background))
+        .navigationTitle("Weather forecast")
         .navigationDestination(item: $store.scope(state: \.dayDetails,
                                                   action: \.dayDetails)) { store in
             DayDetailsView(store: store)
         }
-        .navigationTitle("Weather forecast")
+    }
+
+    private var loader: some View {
+        HStack {
+            Spacer()
+
+            ProgressView()
+                .foregroundColor(.white)
+                .accessibilityLabel("Loading")
+                .accessibilityHint("Please wait while content is loading")
+
+            Spacer()
+        }
     }
 
     private var header: some View {
