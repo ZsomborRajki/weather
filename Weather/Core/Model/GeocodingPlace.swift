@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Shared
 
 struct GeocodingPlace: Equatable, Identifiable {
     let id = UUID()
@@ -14,5 +13,6 @@ struct GeocodingPlace: Equatable, Identifiable {
     let postalCode: String?
     let state: String?
     let country: String?
-    let location: Location
+    let latitude: Double
+    let longitude: Double
 }

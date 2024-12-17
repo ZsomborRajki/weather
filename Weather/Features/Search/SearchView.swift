@@ -16,8 +16,10 @@ struct SearchView: View {
             Text("Search your location:")
                 .font(.headline)
                 .padding(.bottom, 8)
+                .accessibilityLabel("Location search title")
 
             Text("Search for your location in the following text field and then select it from the list")
+                .accessibilityLabel("Location search description")
 
             TextField("\(Image(systemName: "magnifyingglass")) Location", text: $store.searchQuery.sending(\.searchQueryChanged))
                 .onAppear {
@@ -33,9 +35,14 @@ struct SearchView: View {
                 store.send(.doneTapped)
             }
             .buttonStyle(.primary)
+            .accessibilityAddTraits(.isButton)
             .disabled(store.selectedPlace == nil)
 
-            ForEach(store.places) { makeCityCard(place: $0) }
+            ForEach(store.places) { place in
+                PlaceCard(place: place, selectedPlace: store.selectedPlace) {
+                    store.send(.selectPlace(place))
+                }
+            }
 
             Spacer()
         }
@@ -53,41 +60,7 @@ struct SearchView: View {
         .background(Color(.background))
     }
 
-    private func makeCityCard(place: GeocodingPlace) -> some View {
-        Button {
-            store.send(.selectPlace(place))
-        } label: {
-            VStack(alignment: .leading, spacing: 16) {
-                if let city = place.city {
-                    Text(city)
-                        .font(.caption)
-                }
-
-                HStack {
-                    if let postalCode = place.postalCode {
-                        Text("\(postalCode) -")
-                    }
-
-                    if let state = place.state {
-                        Text("\(state) -")
-                    }
-
-                    if let country = place.country {
-                        Text(country)
-                    }
-
-                    Spacer()
-                }
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(store.selectedPlace == place ? Color(.purple) : Color(.pressedDark))
-                    .stroke(Color.white)
-            )
-        }
-        .buttonStyle(.plain)
-    }
+   
 }
 
 #Preview {

@@ -17,6 +17,7 @@ struct Days {
         var forecast: WeatherForecast?
         var errorText = ""
         @Presents public var dayDetails: DayDetails.State?
+        @Presents public var location: LocationFeature.State?
     }
 
     enum Action {
@@ -24,6 +25,8 @@ struct Days {
         case fetchForecast
         case selectDayItem(TimelineItem<DataValuesDaily>)
         case dayDetails(PresentationAction<DayDetails.Action>)
+        case location(PresentationAction<LocationFeature.Action>)
+        case openLocation
     }
 
     @Dependency(\.weatherClient) var weatherClient
@@ -56,12 +59,19 @@ struct Days {
                 state.dayDetails = DayDetails.State(item: item)
 
                 return .none
-            case .dayDetails:
+            case .openLocation:
+                state.location = LocationFeature.State()
+                
+                return .none
+            case .dayDetails, .location:
                 return .none
             }
         }
         .ifLet(\.$dayDetails, action: \.dayDetails) {
             DayDetails()
+        }
+        .ifLet(\.$location, action: \.location) {
+            LocationFeature()
         }
     }
 }

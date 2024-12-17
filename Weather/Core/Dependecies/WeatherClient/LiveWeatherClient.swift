@@ -17,12 +17,8 @@ extension WeatherApiClient: DependencyKey {
 
     static let liveValue = WeatherApiClient(
         forecast: { place in
-            guard let latitude = place.location.lat, let longitude = place.location.lon else {
-                throw WeatherApiError.missingRequestData
-            }
-
-            let result = try await client.requestWeatherForecast(latitude: latitude.doubleValue,
-                                                                 longitude: longitude.doubleValue,
+            let result = try await client.requestWeatherForecast(latitude: place.latitude,
+                                                                 longitude: place.longitude,
                                                                  units: .metric,
                                                                  cachePolicy: .companion.DEFAULT)
 
@@ -38,6 +34,11 @@ extension WeatherApiClient: DependencyKey {
 }
 
 enum WeatherApiError: LocalizedError {
-    case missingRequestData
     case error
+
+    var errorDescription: String? {
+        switch self {
+        case .error: "Error fetiching data"
+        }
+    }
 }

@@ -21,6 +21,8 @@ struct DaysView: View {
 
                     ProgressView()
                         .foregroundColor(.white)
+                        .accessibilityLabel("Loading")
+                        .accessibilityHint("Please wait while content is loading")
 
                     Spacer()
                 }
@@ -48,6 +50,10 @@ struct DaysView: View {
         }
         .padding()
         .background(Color(.background))
+        .navigationDestination(item: $store.scope(state: \.location,
+                                                  action: \.location)) { store in
+            LocationView(store: store)
+        }
         .navigationDestination(item: $store.scope(state: \.dayDetails,
                                                   action: \.dayDetails)) { store in
             DayDetailsView(store: store)
@@ -62,7 +68,7 @@ struct DaysView: View {
             Spacer()
 
             Button {
-
+                store.send(.openLocation)
             } label: {
                 Text(store.place.city ?? store.place.state ?? "City")
                     .padding(12)
@@ -72,7 +78,9 @@ struct DaysView: View {
                     )
             }
             .buttonStyle(.plain)
+            .accessibilityAddTraits(.isButton)
         }
+        .accessibilityElement(children: .combine)
         .padding(.bottom, 16)
     }
 
@@ -89,6 +97,8 @@ struct DaysView: View {
 
                     Text(date, format: .dateTime.day().month(.defaultDigits).year())
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Date labels")
 
                 Spacer()
             }
@@ -106,19 +116,23 @@ struct DaysView: View {
         VStack(alignment: .leading, spacing: 24) {
             Text("Sorry a failure happened")
                 .font(.headline)
+                .accessibilityLabel("Error message title")
 
             Text("Error: \(store.errorText)")
+                .accessibilityLabel("Error message")
 
             Text("""
                 Please try the following steps and try again.
                  • Check the internet connection
                  • Make sure that your location services are switched on
                 """)
-            
+            .accessibilityLabel("Error message suggestions")
+
             Button("Try again") {
                 store.send(.fetchForecast)
             }
             .buttonStyle(.primary)
+            .accessibilityAddTraits(.isButton)
 
             Spacer()
         }

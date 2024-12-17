@@ -14,12 +14,4 @@ struct DayDetails {
     struct State: Equatable {
         let item: TimelineItem<DataValuesDaily>
     }
-    
-    enum Action {}
-
-    var body: some Reducer<State, Action> {
-        Reduce { state, action in
-            .none
-        }
-    }
 }

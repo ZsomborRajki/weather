@@ -114,10 +114,3 @@ struct DayDetailsView: View {
         }
     }
 }
-
-#Preview {
-    DayDetailsView(store: Store(initialState: DayDetails.State(item: [TimelineItem<DataValuesDaily>].mock.first!)) {
-        DayDetails()
-    })
-    .preferredColorScheme(.dark)
-}

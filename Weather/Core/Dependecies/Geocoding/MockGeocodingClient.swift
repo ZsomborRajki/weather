@@ -12,5 +12,6 @@ extension GeocodingPlace {
                                      postalCode: "1194",
                                      state: nil,
                                      country: "Hungary",
-                                     location: .mock)
+                                     latitude: 47,
+                                     longitude: 19)
 }

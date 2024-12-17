@@ -17,6 +17,7 @@ struct WelcomeView: View {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Welcome to the weather app!")
                     .font(.headline)
+                    .accessibilityLabel("Welcome header")
 
                 Text("To be able to start, we need a location for which the weather information can be retrieved.")
 
@@ -24,11 +25,13 @@ struct WelcomeView: View {
                     store.send(.enterLocationTapped)
                 }
                 .buttonStyle(.secondary)
+                .accessibilityAddTraits(.isButton)
 
                 Button("Use my location") {
                     store.send(.useMyLocationTapped)
                 }
                 .buttonStyle(.primary)
+                .accessibilityAddTraits(.isButton)
 
                 Spacer()
             }
@@ -37,6 +40,7 @@ struct WelcomeView: View {
             }
             .padding()
             .background(Color(.background))
+            .navigationTitle("Welcome")
         }
         .accentColor(.white)
     }
