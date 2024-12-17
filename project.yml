@@ -1,6 +1,7 @@
 name: Weather
 options:
   bundleIdPrefix: com.zsrajki
+  DEVELOPMENT_TEAM = 697EW27G9U;
 packages:
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
@@ -10,8 +11,9 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "18.2"
-    sources: [Weather, WeatherTests]
+    sources: [Weather]
     settings:
+      DEVELOPMENT_TEAM: 697EW27G9U
       configs:
         debug:
           CUSTOM_BUILD_SETTING: my_debug_value
@@ -21,7 +23,31 @@ targets:
       path: Weather/Info.plist
       properties:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UILaunchStoryboardName: LaunchScreen
         NSLocationWhenInUseUsageDescription: "We need your location to show you the weather"
     dependencies:
       - framework: Shared.xcframework
       - package: ComposableArchitecture
+  WeatherTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "18.2"
+    sources: [WeatherTests]
+    dependencies:
+      - target: Weather
+schemes:
+  Weather:
+    build:
+      targets:
+        Weather: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [WeatherTests]
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
