@@ -36,4 +36,6 @@ xcodegen generate
 ```
 Demo
 <img src="https://github.com/ZsomborRajki/weather/blob/main/demo.gif" width="400"/>
+<img src="https://github.com/ZsomborRajki/weather/blob/main/screen.png" width="400"/>
+
 ```
