@@ -1,24 +1,39 @@
-to run the project 
+ Weather App
 
-install xcodegen 
+## Setup Instructions
 
-https://github.com/yonaskolb/XcodeGen
+### Prerequisites
+1. Install XcodeGen using Homebrew:
+```bash
 brew install xcodegen
+```
 
-run
+### Installation
 
+Generate the Xcode project:
+
+```bash
+xcodegen generate
+```
+### Configuration
+To use the weather functions:
+
+Add your API KEY in the project.yaml:
+
+```yaml
+debug:
+    WEATHER_API_KEY: "add key"
+release:
+    WEATHER_API_KEY: "add key"
+```
+
+Re-generate the Xcode project:
+
+```bash
 xcodegen generate
 
 
-to use the weather functions
-
-- add your own API KEY in the in the project.yaml
-
-		debug:
-          WEATHER_API_KEY: "add key"
-        release:
-          WEATHER_API_KEY: "add key"
-
- re-run 
-
- xcodegen generate
+```
+Demo
+<img src="https://github.com/ZsomborRajki/weather/blob/main/demo.gif" width="400"/>
+```
