@@ -10,8 +10,6 @@ import Shared
 
 @Reducer
 struct Search {
-    @Dependency(\.geocodingClient) var geocodingClient
-
     @ObservableState
     struct State: Equatable {
         var searchQuery = ""
@@ -22,12 +20,14 @@ struct Search {
 
     enum Action {
         case searchQueryChanged(String)
-        case searchQueryChangeDebounced
         case days(PresentationAction<Days.Action>)
         case searchResponse(Result<[GeocodingPlace], Never>)
         case selectPlace(GeocodingPlace)
         case doneTapped
     }
+
+    @Dependency(\.geocodingClient) var geocodingClient
+    @Dependency(\.storageClient) var storageClient
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -40,13 +40,6 @@ struct Search {
                     return .none
                 }
                 state.searchQuery = query
-
-                return .none
-
-            case .searchQueryChangeDebounced:
-                guard !state.searchQuery.isEmpty else {
-                    return .none
-                }
 
                 return .run { [query = state.searchQuery] send in
                     guard let result = try? await geocodingClient.geocode(address: query) else {
@@ -67,7 +60,11 @@ struct Search {
                 return .none
             case let .selectPlace(place):
                 state.selectedPlace = place
-                return .none
+
+                return .run { send in
+                    print("saving: \(place)")
+                    try storageClient.saveplace(place)
+                }
             }
         }
         .ifLet(\.$days, action: \.days) {

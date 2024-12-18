@@ -35,11 +35,22 @@ targets:
     sources: [WeatherTests]
     dependencies:
       - target: Weather
+    info:
+      path: Weather/Info.plist
+      properties:
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UILaunchStoryboardName: LaunchScreen
+        NSLocationWhenInUseUsageDescription: "We need your location to show you the weather"
+    settings:
+      base:
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Weather.app/Weather"
+        BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
   Weather:
     build:
       targets:
         Weather: all
+        WeatherTests: [test]
     run:
       config: Debug
     test:

@@ -38,9 +38,9 @@ struct Days {
         Reduce { state, action in
             switch action {
             case .fetchForecast:
-                guard !state.isLoading else { return .none }
-                state.isLoading = true
-
+                if state.forecast == nil {
+                    state.isLoading = true
+                }
                 return .run { [place = state.place] send in
                     await send(.forecastResponse(Result {
                         try await weatherClient.forecast(place: place)
@@ -48,8 +48,8 @@ struct Days {
                 }
                 .cancellable(id: CancelID.forcast)
             case let .forecastResponse(.success(response)):
-                state.forecast = response
                 state.isLoading = false
+                state.forecast = response
 
                 return .none
             case let .forecastResponse(.failure(error)):
@@ -62,7 +62,7 @@ struct Days {
 
                 return .none
             case .openLocation:
-                state.location = LocationFeature.State()
+                state.location = LocationFeature.State(selectedPlace: state.place)
 
                 return .none
             case .dismissLocation:

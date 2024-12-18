@@ -12,12 +12,13 @@ extension StorageClient: DependencyKey {
     static let liveValue = StorageClient { place in
         let currentPlaces = (try? loadCurrentPlaces()) ?? []
 
-        var updatedPlaces = currentPlaces
-        updatedPlaces.append(place)
+        var updatedPlaces = Set(currentPlaces)
+        updatedPlaces.insert(place)
 
         let encoder = JSONEncoder()
         do {
             let encoded = try encoder.encode(updatedPlaces)
+            print(encoded)
             UserDefaults.standard.set(encoded, forKey: "places")
         } catch {
             throw StorageError.encodingError
@@ -33,11 +34,10 @@ extension StorageClient: DependencyKey {
 
         let decoder = JSONDecoder()
         do {
-            return try decoder.decode([GeocodingPlace].self, from: data)
+            let places = try decoder.decode([GeocodingPlace].self, from: data)
+            return places
         } catch {
             throw StorageError.decodingError
         }
     }
 }
-
-

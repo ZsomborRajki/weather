@@ -24,6 +24,8 @@ struct DayDetailsView: View {
 
                         Text("Higest value")
                     }
+                    .accessibilityLabel("Peak temperature label")
+                    .accessibilityElement(children: .combine)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
 
@@ -34,6 +36,8 @@ struct DayDetailsView: View {
 
                         Text("Lowest value")
                     }
+                    .accessibilityLabel("Lowest temperature label")
+                    .accessibilityElement(children: .combine)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -55,6 +59,8 @@ struct DayDetailsView: View {
 
                     Text("\(Int(values.precipitationProbabilityAvg * 100)) %")
                 }
+                .accessibilityLabel("Probability of rain label")
+                .accessibilityElement(children: .combine)
 
                 HStack {
                     Text("Maximum UV Index")
@@ -63,6 +69,8 @@ struct DayDetailsView: View {
 
                     Text("\(values.uvIndexMax?.intValue ?? 0)")
                 }
+                .accessibilityLabel("Max UV index speed label")
+                .accessibilityElement(children: .combine)
 
                 HStack {
                     Text("Maximum Wind speed")
@@ -71,6 +79,8 @@ struct DayDetailsView: View {
 
                     Text("\(Int(values.windSpeedMax * 3.6)) km/h")
                 }
+                .accessibilityLabel("Maximum Wind speed label")
+                .accessibilityElement(children: .combine)
 
                 Text("Wind Direction")
 
@@ -84,7 +94,10 @@ struct DayDetailsView: View {
                             .rotationEffect(Angle(degrees: -45 + values.windDirectionAvg))
 
                         Text(values.windDirection)
+
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Wind direction indicator")
 
                     Spacer()
                 }
@@ -96,6 +109,8 @@ struct DayDetailsView: View {
 
                     Text("\(Int(values.visibilityAvg * 1000)) m")
                 }
+                .accessibilityLabel("Visibility label")
+                .accessibilityElement(children: .combine)
 
                 Text("Sun position")
 
@@ -104,13 +119,14 @@ struct DayDetailsView: View {
                     SunPositionChart(sunriseTime: sunriseTime,
                                      sunsetTime: sunsetTime,
                                      currentTime: Date())
+                    .accessibilityLabel("Sun position chart")
                 }
 
                 Spacer()
             }
             .padding()
             .background(Color(.background))
-            .navigationTitle("Tomorrow")
+            .navigationTitle(store.item.time.asSwiftDate.relativeWeekday)
         }
     }
 }

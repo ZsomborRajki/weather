@@ -46,12 +46,6 @@ struct SearchView: View {
 
             Spacer()
         }
-        .task(id: store.searchQuery) {
-            do {
-                try await Task.sleep(for: .milliseconds(300))
-                await store.send(.searchQueryChangeDebounced).finish()
-            } catch {}
-        }
         .padding()
         .navigationTitle("Enter location")
         .navigationDestination(item: $store.scope(state: \.days, action: \.days)) { store in

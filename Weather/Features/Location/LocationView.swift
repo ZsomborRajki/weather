@@ -29,36 +29,36 @@ struct LocationView: View {
                 Text("Current location")
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Current location indicator")
+            .accessibilityLabel("Current location label")
 
-            placeCard
+            locationPlaceCard
 
             if store.locationPermission == .denied ||
                 store.locationPermission == .restricted {
-                VStack {
-                    Image(systemName: "location.slash")
-                        .resizable()
-                        .frame(width: 24, height: 24)
+                settingsView
+            }
 
-                    Text("Location services currently disabled")
-                        .padding(.bottom, 12)
+            HStack(spacing: 8) {
+                Image(systemName: "tray.and.arrow.down")
 
-                    Button {
-                        store.send(.openSettings)
-                    } label: {
-                        HStack {
-                            Image(systemName: "gear")
+                Text("Saved locations")
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Saved places label")
 
-                            Text("Go to settings")
-                        }
-                    }
+            ForEach(store.savedPlaces) { place in
+                PlaceCard(place: place, selectedPlace: store.selectedPlace) {
+                    store.send(.selectPlace(place))
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white)
-                )
+                .overlay {
+                    HStack {
+                        Spacer()
+
+                        Image(systemName: "tray.and.arrow.down")
+                    }
+                    .padding()
+                    .accessibilityHidden(true)
+                }
             }
 
             Spacer()
@@ -67,6 +67,7 @@ struct LocationView: View {
         .onAppear {
             store.send(.requestLocationPermission)
             store.send(.requestLocation)
+            store.send(.readSavedPlaces)
         }
         .onChange(of: scenePhase) { _, phase in
             store.send(.scenePhaseChanged(phase))
@@ -77,7 +78,7 @@ struct LocationView: View {
     }
 
     @ViewBuilder
-    private var placeCard: some View {
+    private var locationPlaceCard: some View {
         if let place = store.locationPlace {
             PlaceCard(place: place, selectedPlace: store.selectedPlace) {
                 store.send(.selectPlace(place))
@@ -92,6 +93,34 @@ struct LocationView: View {
                 .accessibilityHidden(true)
             }
         }
+    }
+
+    private var settingsView: some View {
+        VStack {
+            Image(systemName: "location.slash")
+                .resizable()
+                .frame(width: 24, height: 24)
+
+            Text("Location services currently disabled")
+                .padding(.bottom, 12)
+
+            Button {
+                store.send(.openSettings)
+            } label: {
+                HStack {
+                    Image(systemName: "gear")
+
+                    Text("Go to settings")
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white)
+        )
+
     }
 }
 

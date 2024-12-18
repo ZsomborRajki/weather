@@ -15,6 +15,7 @@ struct LocationFeature {
     struct State: Equatable {
         var locationPlace: GeocodingPlace?
         var selectedPlace: GeocodingPlace?
+        var savedPlaces = [GeocodingPlace]()
         var locationPermission: CLAuthorizationStatus?
         var errorText = ""
         var scenePhase: ScenePhase = .inactive
@@ -29,12 +30,15 @@ struct LocationFeature {
         case openSettings
         case scenePhaseChanged(ScenePhase)
         case selectPlace(GeocodingPlace)
+        case readSavedPlaces
+        case savedPlacesResult([GeocodingPlace])
     }
 
     @Dependency(\.locationManager) var locationManager
     @Dependency(\.openSettings) var openSettings
     @Dependency(\.geocodingClient) var geocodingClient
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.storageClient) var storageClient
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -58,8 +62,10 @@ struct LocationFeature {
                 return .run { send in
                     do {
                         guard let location = locationManager.location else { return }
-                        let plate = try await geocodingClient.reverseGeocode(latitude: location.coordinate.latitude,
-                                                                             longitude: location.coordinate.longitude)
+                        let plate = try await geocodingClient.reverseGeocode(
+                            latitude: location.coordinate.latitude,
+                            longitude: location.coordinate.longitude
+                        )
                         await send(.locationResponse(plate))
                     } catch {
                         await send(.setErrorText(error.localizedDescription))
@@ -72,8 +78,10 @@ struct LocationFeature {
                     case .authorizedAlways, .authorizedWhenInUse:
                         do {
                             guard let location = locationManager.location else { return }
-                            let place = try await geocodingClient.reverseGeocode(latitude: location.coordinate.latitude,
-                                                                                 longitude: location.coordinate.longitude)
+                            let place = try await geocodingClient.reverseGeocode(
+                                latitude: location.coordinate.latitude,
+                                longitude: location.coordinate.longitude
+                            )
 
                             await send(.locationResponse(place))
                         } catch {
@@ -99,6 +107,16 @@ struct LocationFeature {
                 return .run { _ in
                     await self.openSettings()
                 }
+            case .readSavedPlaces:
+                return .run { send in
+                    let places = try storageClient.loadPlaces()
+                    print("saved: \(places)")
+                    await send(.savedPlacesResult(places))
+                }
+            case let .savedPlacesResult(places):
+                state.savedPlaces = places
+
+                return .none
             }
         }
     }

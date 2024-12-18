@@ -96,7 +96,7 @@ struct DaysView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     let date = item.time.asSwiftDate
 
-                    Text(date, format: .dateTime.weekday(.wide))
+                    Text(date.relativeWeekday)
                         .bold()
 
                     Text(date, format: .dateTime.day().month(.defaultDigits).year())
