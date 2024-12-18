@@ -8,7 +8,6 @@
 import ComposableArchitecture
 import Shared
 
-
 private struct WeatherConfiguration {
     static var apiKey: String {
         get throws {
@@ -20,7 +19,7 @@ private struct WeatherConfiguration {
 extension WeatherApiClient: DependencyKey {
     static let platformFileStore = PlatformFileStore()
     static let platformSettingStore = PlatformSettingStore()
-    static let client = WeatherClient(appId: try! WeatherConfiguration.apiKey,
+    static let client = WeatherClient(appId: (try? WeatherConfiguration.apiKey) ?? "",
                                       platformFileStore: platformFileStore,
                                       platformSettingStore: platformSettingStore)
 

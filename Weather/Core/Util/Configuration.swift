@@ -11,12 +11,12 @@ public enum InfoConfiguration {
     enum Error: Swift.Error {
         case missingKey, invalidValue
     }
-    
+
     static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
         guard let object = Bundle.main.object(forInfoDictionaryKey: key) else {
             throw Error.missingKey
         }
-        
+
         switch object {
         case let value as T:
             return value
