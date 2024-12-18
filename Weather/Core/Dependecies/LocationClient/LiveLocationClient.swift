@@ -19,6 +19,7 @@ protocol LocationManaging: ObservableObject {
     func requestPermission()
     func startUpdatingLocation()
     func stopUpdatingLocation()
+    func authorizationStatusUpdates() -> AsyncStream<CLAuthorizationStatus>
 }
 
 // MARK: - LocationManager
@@ -29,6 +30,7 @@ class LocationManager: NSObject, LocationManaging {
     var location: CLLocation?
     var authorizationStatus: CLAuthorizationStatus
     var error: Error?
+    private var authorizationContinuation: AsyncStream<CLAuthorizationStatus>.Continuation?
 
     override init() {
         authorizationStatus = locationManager.authorizationStatus
@@ -37,6 +39,13 @@ class LocationManager: NSObject, LocationManaging {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 10
+    }
+
+    func authorizationStatusUpdates() -> AsyncStream<CLAuthorizationStatus> {
+        AsyncStream { continuation in
+            authorizationContinuation = continuation
+            continuation.yield(authorizationStatus)
+        }
     }
 
     func requestPermission() {
@@ -64,7 +73,9 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        authorizationStatus = manager.authorizationStatus
+        let newStatus = manager.authorizationStatus
+        authorizationStatus = newStatus
+        authorizationContinuation?.yield(newStatus)
     }
 }
 

@@ -5,7 +5,6 @@
 //  Created by Zsombor Rajki on 2024. 12. 18..
 //
 
-
 import Testing
 import Foundation
 @testable import Weather

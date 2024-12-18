@@ -18,10 +18,14 @@ struct SearchView: View {
                 .padding(.bottom, 8)
                 .accessibilityLabel("Location search title")
 
-            Text("Search for your location in the following text field and then select it from the list")
+            Text("""
+                Search for your location in the following text field
+                and then select it from the list
+                """)
                 .accessibilityLabel("Location search description")
 
-            TextField("\(Image(systemName: "magnifyingglass")) Location", text: $store.searchQuery.sending(\.searchQueryChanged))
+            TextField("\(Image(systemName: "magnifyingglass")) Location",
+                      text: $store.searchQuery.sending(\.searchQueryChanged))
                 .onAppear {
                     UITextField.appearance().clearButtonMode = .whileEditing
                 }
@@ -53,8 +57,6 @@ struct SearchView: View {
         }
         .background(Color(.background))
     }
-
-   
 }
 
 #Preview {

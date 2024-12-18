@@ -56,13 +56,12 @@ struct Search {
                 if let place = state.selectedPlace {
                     state.days = Days.State(place: place)
                 }
-                
+
                 return .none
             case let .selectPlace(place):
-                state.selectedPlace = place
+                        state.selectedPlace = place
 
-                return .run { send in
-                    print("saving: \(place)")
+                return .run { _ in
                     try storageClient.saveplace(place)
                 }
             }
@@ -72,4 +71,3 @@ struct Search {
         }
     }
 }
-

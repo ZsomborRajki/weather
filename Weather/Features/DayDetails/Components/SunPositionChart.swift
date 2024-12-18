@@ -26,8 +26,8 @@ struct SunPositionChart: View {
                 return (startOfDay, 0)
             }
 
-            let y = calculateYValue(for: time)
-            return (time, y)
+            let yValue = calculateYValue(for: time)
+            return (time, yValue)
         }
     }
 
@@ -66,14 +66,15 @@ struct SunPositionChart: View {
             .chartXScale(domain: sunriseTime...sunsetTime)
             .overlay {
                 if currentTime >= sunriseTime && currentTime <= sunsetTime {
-                    let progress = currentTime.timeIntervalSince(sunriseTime) / sunsetTime.timeIntervalSince(sunriseTime)
-                    let x = geometry.size.width * progress
-                    let y = geometry.size.height * (1 - CGFloat(calculateYValue(for: currentTime)))
+                    let progress = currentTime.timeIntervalSince(sunriseTime)
+                    / sunsetTime.timeIntervalSince(sunriseTime)
+                    let xPosition = geometry.size.width * progress
+                    let yPosition = geometry.size.height * (1 - CGFloat(calculateYValue(for: currentTime)))
 
                     Circle()
                         .fill(.white)
                         .frame(width: 8, height: 8)
-                        .position(x: x, y: y)
+                        .position(x: xPosition, y: yPosition)
                 }
             }
         }

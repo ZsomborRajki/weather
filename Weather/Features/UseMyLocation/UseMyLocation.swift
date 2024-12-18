@@ -1,8 +1,8 @@
 //
-//  Location.swift
+//  UseMyLocation.swift
 //  Weather
 //
-//  Created by Zsombor Rajki on 2024. 12. 17..
+//  Created by Zsombor Rajki on 2024. 12. 18..
 //
 
 import ComposableArchitecture
@@ -10,50 +10,43 @@ import CoreLocation
 import SwiftUI
 
 @Reducer
-struct LocationFeature {
+struct UseMyLocation {
     @ObservableState
     struct State: Equatable {
         var locationPlace: GeocodingPlace?
-        var selectedPlace: GeocodingPlace?
-        var savedPlaces = [GeocodingPlace]()
         var locationPermission: CLAuthorizationStatus?
         var scenePhase: ScenePhase = .inactive
-        @Presents public var search: Search.State?
+        @Presents public var days: Days.State?
     }
 
     enum Action {
         case onAppear
         case onDisappear
+        case openSettings
+        case scenePhaseChanged(ScenePhase)
         case requestLocationPermission
         case requestLocation
         case locationPermissionResponse(CLAuthorizationStatus)
         case locationResponse(GeocodingPlace)
-        case openSettings
-        case scenePhaseChanged(ScenePhase)
         case selectPlace(GeocodingPlace)
-        case readSavedPlaces
-        case savedPlacesResult([GeocodingPlace])
-        case search(PresentationAction<Search.Action>)
-        case searchTapped
+        case days(PresentationAction<Days.Action>)
     }
 
     @Dependency(\.locationManager) var locationManager
     @Dependency(\.openSettings) var openSettings
     @Dependency(\.geocodingClient) var geocodingClient
-    @Dependency(\.dismiss) var dismiss
-    @Dependency(\.storageClient) var storageClient
 
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:
                 return .concatenate([
-                    .send( .requestLocationPermission),
-                    .send(.requestLocation),
-                    .send(.readSavedPlaces)
+                    .send(.requestLocationPermission),
+                    .send(.requestLocation)
                 ])
             case .onDisappear:
                 locationManager.stopUpdatingLocation()
+
                 return .none
             case let .scenePhaseChanged(phase):
                 state.scenePhase = phase
@@ -63,6 +56,7 @@ struct LocationFeature {
                         .send(.requestLocation)
                     ])
                 }
+
                 return .none
             case .requestLocationPermission:
                 return .run { send in
@@ -91,38 +85,24 @@ struct LocationFeature {
                 state.locationPlace = place
 
                 return .none
-            case .selectPlace:
-                locationManager.stopUpdatingLocation()
-                return .run { _ in
-                    await self.dismiss()
-                }
             case .openSettings:
                 return .run { _ in
                     await self.openSettings()
                 }
-            case .readSavedPlaces:
-                return .run { send in
-                    let places = try storageClient.loadPlaces()
-                    await send(.savedPlacesResult(places))
-                }
-            case let .savedPlacesResult(places):
-                state.savedPlaces = places
+            case let .selectPlace(place):
+                state.days = Days.State(place: place)
 
                 return .none
-            case .searchTapped:
-                state.search = Search.State()
-
-                return .none
-            case .search:
+            case .days:
                 return .none
             }
         }
-        .ifLet(\.$search, action: \.search) {
-            Search()
+        .ifLet(\.$days, action: \.days) {
+            Days()
         }
     }
 
-     private func getPlace() async -> GeocodingPlace? {
+    private func getPlace() async -> GeocodingPlace? {
         guard let location = locationManager.location,
               let place = try? await geocodingClient.reverseGeocode(latitude: location.coordinate.latitude,
                                                                     longitude: location.coordinate.longitude) else {

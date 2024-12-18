@@ -16,27 +16,7 @@ struct GeocodingClient {
 
 extension GeocodingClient: TestDependencyKey {
     static let testValue = GeocodingClient(
-        geocode: { address in
-            [
-                GeocodingPlace(
-                    city: "Test City",
-                    postalCode: "30000",
-                    state: "Test state",
-                    country: "Test Country",
-                    latitude: 47,
-                    longitude: 19
-                )
-            ]
-        }, reverseGeocode: { latitude, longitude in
-            GeocodingPlace(
-                city: "Test City",
-                postalCode: "30000",
-                state: "Test state",
-                country: "Test Country",
-                latitude: 47,
-                longitude: 19
-            )
-        }
+        geocode: { _ in [.mock]}, reverseGeocode: { _, _ in .mock }
     )
 }
 

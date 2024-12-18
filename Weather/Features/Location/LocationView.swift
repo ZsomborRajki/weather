@@ -10,64 +10,60 @@ import SwiftUI
 import CoreLocation
 
 struct LocationView: View {
-    let store: StoreOf<LocationFeature>
-
+    @Bindable var store: StoreOf<LocationFeature>
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("""
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("""
                  You can use the location from your device or by searching a manual location.
-                 Manual searched locations can be saved to find them later easily while you were out looked by multiple locations.
+                 Manual searched locations can be saved to find them later easily
+                 while you were out looked by multiple locations.
                  """)
 
-            Divider()
+                Divider()
 
-            HStack(spacing: 8) {
-                Image(systemName: "location.fill")
-
-                Text("Current location")
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Current location label")
-
-            locationPlaceCard
-
-            if store.locationPermission == .denied ||
-                store.locationPermission == .restricted {
-                settingsView
-            }
-
-            HStack(spacing: 8) {
-                Image(systemName: "tray.and.arrow.down")
-
-                Text("Saved locations")
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Saved places label")
-
-            ForEach(store.savedPlaces) { place in
-                PlaceCard(place: place, selectedPlace: store.selectedPlace) {
+                CurrentLocationSection(place: store.locationPlace,
+                                       selectedPlace: store.selectedPlace,
+                                       locationPermission: store.locationPermission,
+                                       openSettings: {
+                    store.send(.openSettings)
+                }, selectPlace: { place in
                     store.send(.selectPlace(place))
-                }
-                .overlay {
-                    HStack {
-                        Spacer()
+                })
 
-                        Image(systemName: "tray.and.arrow.down")
+                HStack(spacing: 8) {
+                    Image(systemName: "tray.and.arrow.down")
+
+                    Text("Saved locations")
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Saved places label")
+
+                ForEach(store.savedPlaces) { place in
+                    PlaceCard(place: place, selectedPlace: store.selectedPlace) {
+                        store.send(.selectPlace(place))
                     }
-                    .padding()
-                    .accessibilityHidden(true)
+                    .overlay {
+                        HStack {
+                            Spacer()
+
+                            Image(systemName: "tray.and.arrow.down")
+                        }
+                        .padding()
+                        .accessibilityHidden(true)
+                    }
                 }
+
+                Spacer()
             }
-
-            Spacer()
-
         }
         .onAppear {
-            store.send(.requestLocationPermission)
-            store.send(.requestLocation)
-            store.send(.readSavedPlaces)
+            store.send(.onAppear)
+        }
+        .onDisappear {
+            store.send(.onDisappear)
         }
         .onChange(of: scenePhase) { _, phase in
             store.send(.scenePhaseChanged(phase))
@@ -75,52 +71,24 @@ struct LocationView: View {
         .padding()
         .background(Color(.background))
         .navigationTitle("Location")
-    }
-
-    @ViewBuilder
-    private var locationPlaceCard: some View {
-        if let place = store.locationPlace {
-            PlaceCard(place: place, selectedPlace: store.selectedPlace) {
-                store.send(.selectPlace(place))
-            }
-            .overlay {
-                HStack {
-                    Spacer()
-
-                    Image(systemName: "location.fill")
-                }
-                .padding()
-                .accessibilityHidden(true)
-            }
-        }
-    }
-
-    private var settingsView: some View {
-        VStack {
-            Image(systemName: "location.slash")
-                .resizable()
-                .frame(width: 24, height: 24)
-
-            Text("Location services currently disabled")
-                .padding(.bottom, 12)
-
+        .edgesIgnoringSafeArea(.bottom)
+        .overlay(alignment: .bottom) {
             Button {
-                store.send(.openSettings)
+                store.send(.searchTapped)
             } label: {
-                HStack {
-                    Image(systemName: "gear")
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
 
-                    Text("Go to settings")
+                    Text("Go to search")
                 }
+                .accessibilityElement(children: .combine)
             }
+            .padding()
+            .buttonStyle(.secondary)
         }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.white)
-        )
-
+        .navigationDestination(item: $store.scope(state: \.search, action: \.search)) { store in
+            SearchView(store: store)
+        }
     }
 }
 

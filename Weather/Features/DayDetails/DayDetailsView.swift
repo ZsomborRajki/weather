@@ -28,7 +28,6 @@ struct DayDetailsView: View {
                     .accessibilityElement(children: .combine)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-
                     VStack(alignment: .leading, spacing: 8) {
                         Text("\(Int(values.temperatureMin)) ˚C")
                             .font(.title2)

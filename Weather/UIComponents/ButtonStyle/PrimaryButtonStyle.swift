@@ -23,7 +23,6 @@ struct PrimaryButtonStyle: ButtonStyle {
     }
 }
 
-
 extension ButtonStyle where Self == PrimaryButtonStyle {
     static var primary: Self {
         PrimaryButtonStyle()

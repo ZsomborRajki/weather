@@ -24,7 +24,7 @@ extension WeatherApiClient: DependencyKey {
 
             if let data = result as? ResponseSuccess, let data = data.data {
                 return data
-            } else if let data = result as? ResponseFromCache, let data = data.data  {
+            } else if let data = result as? ResponseFromCache, let data = data.data {
                 return data
             } else {
                 throw WeatherApiError.error

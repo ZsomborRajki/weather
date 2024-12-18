@@ -38,6 +38,9 @@ struct WelcomeView: View {
             .navigationDestination(item: $store.scope(state: \.search, action: \.search)) { store in
                 SearchView(store: store)
             }
+            .navigationDestination(item: $store.scope(state: \.myLocation, action: \.myLocation)) { store in
+                UseMyLocationView(store: store)
+            }
             .padding()
             .background(Color(.background))
             .navigationTitle("Welcome")

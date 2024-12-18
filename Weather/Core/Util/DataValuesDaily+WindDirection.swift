@@ -24,10 +24,8 @@ extension DataValuesDaily {
             (292.5..<337.5, "NW")
         ]
 
-        for (range, symbol) in directions {
-            if range.contains(normalizedDegrees) {
-                return symbol
-            }
+        for (range, symbol) in directions where range.contains(normalizedDegrees) {
+            return symbol
         }
 
         return "N"

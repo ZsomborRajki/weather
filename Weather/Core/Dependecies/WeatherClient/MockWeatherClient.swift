@@ -12,7 +12,10 @@ extension WeatherForecast {
 }
 
 extension Location {
-    static let mock = Location(lat: KotlinDouble(47.4421269), lon: KotlinDouble(19.1447841), name: "Budapest", type: nil)
+    static let mock = Location(lat: KotlinDouble(47.4421269),
+                               lon: KotlinDouble(19.1447841),
+                               name: "Budapest",
+                               type: nil)
 }
 
 extension WeatherForecastTimelines {
@@ -71,8 +74,8 @@ extension DataValuesDaily {
         iceAccumulationSum: 0.0,
 
         // Moon times
-        moonriseTime:.mockNow,
-        moonsetTime:.mockNow,
+        moonriseTime: .mockNow,
+        moonsetTime: .mockNow,
 
         // Precipitation probability (0-1)
         precipitationProbabilityAvg: 0.3,

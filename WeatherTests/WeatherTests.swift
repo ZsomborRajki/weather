@@ -10,7 +10,6 @@ import Testing
 struct WeatherTests {
 
     @Test func example() async throws {
-        // assert 1 == 1
         #expect(1 == 1)
     }
 }
