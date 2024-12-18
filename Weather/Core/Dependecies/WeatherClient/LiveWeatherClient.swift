@@ -8,10 +8,19 @@
 import ComposableArchitecture
 import Shared
 
+
+private struct WeatherConfiguration {
+    static var apiKey: String {
+        get throws {
+            try Configuration.value(for: "INFOPLIST_KEY_WEATHER_API_KEY")
+        }
+    }
+}
+
 extension WeatherApiClient: DependencyKey {
     static let platformFileStore = PlatformFileStore()
     static let platformSettingStore = PlatformSettingStore()
-    static let client = WeatherClient(appId: "1I5rQGUBnsiEPfCHJuu5AgRT7QbVeB1t",
+    static let client = WeatherClient(appId: try! WeatherConfiguration.apiKey,
                                       platformFileStore: platformFileStore,
                                       platformSettingStore: platformSettingStore)
 

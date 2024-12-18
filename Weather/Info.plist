@@ -18,6 +18,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>INFOPLIST_KEY_WEATHER_API_KEY</key>
+	<string>$(WEATHER_API_KEY)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to show you the weather</string>
 	<key>UILaunchStoryboardName</key>

@@ -14,15 +14,16 @@ targets:
     settings:
       configs:
         debug:
-          CUSTOM_BUILD_SETTING: my_debug_value
+          WEATHER_API_KEY: ""
         release:
-          CUSTOM_BUILD_SETTING: my_release_value
+          WEATHER_API_KEY: ""
     info:
       path: Weather/Info.plist
       properties:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UILaunchStoryboardName: LaunchScreen
         NSLocationWhenInUseUsageDescription: "We need your location to show you the weather"
+        INFOPLIST_KEY_WEATHER_API_KEY: $(WEATHER_API_KEY)
     dependencies:
       - framework: Shared.xcframework
       - package: ComposableArchitecture
@@ -41,6 +42,7 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UILaunchStoryboardName: LaunchScreen
         NSLocationWhenInUseUsageDescription: "We need your location to show you the weather"
+        INFOPLIST_KEY_WEATHER_API_KEY: $(WEATHER_API_KEY)
     settings:
       base:
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Weather.app/Weather"
