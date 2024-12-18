@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Configuration {
+public enum InfoConfiguration {
     enum Error: Swift.Error {
         case missingKey, invalidValue
     }

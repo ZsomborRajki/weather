@@ -12,7 +12,7 @@ import Shared
 private struct WeatherConfiguration {
     static var apiKey: String {
         get throws {
-            try Configuration.value(for: "INFOPLIST_KEY_WEATHER_API_KEY")
+            try InfoConfiguration.value(for: "INFOPLIST_KEY_WEATHER_API_KEY")
         }
     }
 }
